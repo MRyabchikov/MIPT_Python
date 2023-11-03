@@ -38,7 +38,7 @@ def get_lsm_description(
     if not (isinstance(abscissa, list)) or not (isinstance(ordinates, list)):
         try:
             abscissa = list(abscissa)
-            ordinata = list(ordinates)
+            ordinates = list(ordinates)
         except TypeError:
             raise TypeError
     if not _is_valid_measurments(abscissa):
@@ -48,13 +48,8 @@ def get_lsm_description(
     if len(abscissa) <= 2 or len(ordinates) <= 2:
         raise ValueError
     if len(abscissa) != len(ordinates):
-        if mismatch_strategy == MismatchStrategies.FALL:
-            raise RuntimeError
-        elif mismatch_strategy == MismatchStrategies.CUT:
-            abscissa = abscissa[:min(len(abscissa), len(ordinates))]
-            ordinata = ordinata[:min(len(abscissa), len(ordinates))]
-        else:
-            raise ValueError
+        # abscissa, ordinates = \
+            _process_mismatch(abscissa, ordinates, mismatch_strategy)
     return _get_lsm_description(abscissa, ordinates)
 
 
@@ -79,12 +74,15 @@ def get_lsm_lines(
         raise TypeError
     d = lsm_description
     line_predicted, line_above, line_under = [], [], []
-    for i in range(len(ordinates)):
-        line_predicted.append(x[i] * d.incline + d.shift)
-        line_above.append((d.incline + d.incline_error) *
-                          x[i] + d.shift + d.shift_error)
-        line_under.append((d.incline - d.incline_error) *
-                          x[i] + d.shift - d.shift_error)
+    line_predicted = [x * d.incline + d.shift for x in abscissa]
+    line_above = [ x * (d.incline + d.incline_error) + d.shift + d.shift_error for x in abscissa]
+    line_under = [x * (d.incline - d.incline_error) + d.shift - d.shift_error for x in abscissa]
+    # for i in range(len(ordinates)):
+    #     line_predicted.append(x[i] * d.incline + d.shift)
+    #     line_above.append((d.incline + d.incline_error) *
+    #                       x[i] + d.shift + d.shift_error)
+    #     line_under.append((d.incline - d.incline_error) *
+    #                       x[i] + d.shift - d.shift_error)
     return LSMLines(
         abscissa=abscissa,
         ordinates=ordinates,
@@ -138,11 +136,14 @@ def _process_mismatch(
     abscissa: list[float], ordinates: list[float],
     mismatch_strategy: MismatchStrategies = MismatchStrategies.FALL
 ) -> tuple[list[float], list[float]]:
-    global event_logger
-
-    # ваш код
-    # эту строчку можно менять
-    return [], []
+    if mismatch_strategy == MismatchStrategies.FALL:
+        raise RuntimeError
+    elif mismatch_strategy == MismatchStrategies.CUT:
+        abscissa = abscissa[:min(len(abscissa), len(ordinates))]
+        ordinates = ordinates[:min(len(abscissa), len(ordinates))]
+    else:
+        raise ValueError
+    # return abscissa, ordinates
 
 
 # служебная функция для получения статистик
