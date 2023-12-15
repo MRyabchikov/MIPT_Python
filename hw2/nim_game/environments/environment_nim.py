@@ -26,6 +26,6 @@ class EnvironmentNim:
         heap, taken = state_change.heap_id, state_change.decrease
         if (not (0 <= heap < len(self._heaps))):
             raise ValueError
-        elif (not (1 <= taken < self._heaps[heap])):
+        elif (not (1 <= taken <= self._heaps[heap])):
             raise ValueError
         self._heaps[state_change.heap_id] -= state_change.decrease

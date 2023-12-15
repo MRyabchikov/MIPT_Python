@@ -10,9 +10,9 @@ def is_correct_step(state_curr: list[int], taken: int, heap: int):
 
 def make_random_turn(state_curr: list[int]):
     heap = randint(0, len(state_curr)-1)
-    while (state_curr[heap] != 0):
+    while(state_curr[heap] == 0):
         heap = randint(0, len(state_curr)-1)
-        taken = randint(0, state_curr[heap])
+    taken = randint(1, state_curr[heap])
     return heap, taken
 
 
@@ -42,15 +42,14 @@ class Agent:
 
     def __init__(self, level: str) -> None:
         if (level not in [e.value for e in AgentLevels]):
-            print(level, [e.value for e in AgentLevels])
             raise ValueError
         self._level = level
 
     def make_step(self, state_curr: list[int]) -> NimStateChange:
         heap, taken = 0, 0
-        if (self._level == AgentLevels.EASY):
+        if (self._level == AgentLevels.EASY.value):
             heap, taken = make_random_turn(state_curr)
-        elif (self._level == AgentLevels.NORMAL):
+        elif (self._level == AgentLevels.NORMAL.value):
             if (randint(0, 1) == 0):
                 heap, taken = make_random_turn(state_curr)
             else:

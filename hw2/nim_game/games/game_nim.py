@@ -20,8 +20,13 @@ class GameNim:
         if (self.is_game_finished()):
             return GameState(winner=Players.USER)
         else:
-            return GameState(opponent_step=self._agent.make_step
-                             (self.heaps_state), heaps_state=self.heaps_state)
+            bot_step = self._agent.make_step(self.heaps_state)
+            self._environment.change_state(bot_step)
+            if(self.is_game_finished()):
+                return GameState(winner=Players.BOT, opponent_step=bot_step, 
+                             heaps_state=self.heaps_state)    
+            return GameState(opponent_step=bot_step, 
+                             heaps_state=self.heaps_state)
 
     def is_game_finished(self) -> bool:
         return all(x == 0 for x in self.heaps_state)
