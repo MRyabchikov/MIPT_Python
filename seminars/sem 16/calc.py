@@ -24,10 +24,10 @@ class Window(QtWidgets.QMainWindow):
         for i in range(10):
             self.connect_button(numbers[i], i)
 
-        self.ui.pushButton_plus.clicked.connect(self.sum)
+        self.ui.pushButton_plus.clicked.connect(lambda: self.op('+'))
         self.ui.pushButton_eq.clicked.connect(self.eq)
-        self.ui.pushButton_mul.clicked.connect(self.mul)
-        self.ui.pushButton_minus.clicked.connect(self.minus)
+        self.ui.pushButton_mul.clicked.connect(lambda: self.op('*'))
+        self.ui.pushButton_minus.clicked.connect(lambda: self.op('-'))
         self.ui.pushButton_div.clicked.connect(self.div)
         self.ui.pushButton_percent.clicked.connect(self.percent)
         self.ui.pushButton_C.clicked.connect(self.C)
@@ -80,32 +80,14 @@ class Window(QtWidgets.QMainWindow):
 
         self.ui.lineEdit.setText(str(self.cur))
 
-    def sum(self):
+    def op(self, sign):
         self.cur = self.next
         self.next = 0
 
         text = self.ui.lineEdit.displayText()
 
         if text[-1] not in self.ops:
-            text += '+'
-            self.ui.lineEdit.setText(text)
-    def mul(self):
-        self.cur = self.next
-        self.next = 0
-
-        text = self.ui.lineEdit.displayText()
-
-        if text[-1] not in self.ops:
-            text += '*'
-            self.ui.lineEdit.setText(text)
-    def minus(self):
-        self.cur = self.next
-        self.next = 0
-
-        text = self.ui.lineEdit.displayText()
-
-        if text[-1] not in self.ops:
-            text += '-'
+            text += sign
             self.ui.lineEdit.setText(text)
     def div(self):
         self.cur = self.next
